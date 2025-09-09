@@ -1,0 +1,24 @@
+/* Basic reset & variables */
+:root{
+  --bg1:#6a11cb;
+  --bg2:#2575fc;
+  --card:#ffffffcc;
+  --glass: rgba(255,255,255,0.08);
+  --accent:#ffca28;
+  --text:#0f1724;
+  --muted:#4b5563;
+  --radius:14px;
+  --container:1100px;
+  --glass-border: rgba(255,255,255,0.12);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--text);
+  background: linear-gradient(135deg,var(--bg1),var(--bg2));
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.5;
