@@ -1,0 +1,19 @@
+// Basic interactions: menu toggle, reveal on scroll, skill-bar animation, contact form handling
+
+document.addEventListener("DOMContentLoaded", () => {
+  // header year
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // menu toggle for small screens
+  const menuToggle = document.getElementById("menu-toggle");
+  const nav = document.getElementById("nav");
+  menuToggle?.addEventListener("click", () => nav.classList.toggle("show"));
+
+  // intersection observer for reveal sections
+  const reveals = document.querySelectorAll(".reveal");
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+        // animate skill bars when skills section becomes visible
+        if (entry.target.id === "skills" || entry.target.closest("#skills")) {
