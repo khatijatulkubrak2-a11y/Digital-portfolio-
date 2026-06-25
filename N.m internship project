@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Assignment Submission Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📚 College Assignment Submission Tracker</h1>
+
+    <div class="dashboard">
+        <div class="card submitted">
+            <h3>Submitted</h3>
+            <p id="submittedCount">0</p>
+        </div>
+
+        <div class="card pending">
+            <h3>Pending</h3>
+            <p id="pendingCount">0</p>
+        </div>
+
+        <div class="card late">
+            <h3>Late</h3>
+            <p id="lateCount">0</p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h2>Add Assignment</h2>
+
+        <input type="text" id="title" placeholder="Assignment Title">
+
+        <input type="text" id="subject" placeholder="Subject">
+
+        <input type="date" id="dueDate">
+
+        <button onclick="addAssignment()">Add Assignment</button>
+    </div>
+
+    <div class="filter">
+        <label>Filter by Subject:</label>
+        <select id="filterSubject" onchange="filterAssignments()">
+            <option value="All">All</option>
+        </select>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody id="assignmentTable">
+        </tbody>
+    </table>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f4f7fc;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+    color:#1f2937;
+}
+
+.dashboard{
+    display:flex;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.card{
+    flex:1;
+    padding:25px;
+    border-radius:12px;
+    color:white;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card p{
+    font-size:30px;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+.submitted{
+    background:#16a34a;
+}
+
+.pending{
+    background:#f59e0b;
+}
+
+.late{
+    background:#dc2626;
+}
+
+.form-section{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.form-section h2{
+    margin-bottom:15px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.filter{
+    margin-bottom:20px;
+}
+
+.filter select{
+    padding:10px;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+th{
+    background:#2563eb;
+    color:white;
+    padding:15px;
+}
+
+td{
+    padding:12px;
+    text-align:center;
+    border-bottom:1px solid #ddd;
+}
+
+.status-select{
+    padding:8px;
+    border-radius:6px;
+}
+let assignments = [];
+
+function addAssignment() {
+
+    const title = document.getElementById("title").value;
+    const subject = document.getElementById("subject").value;
+    const dueDate = document.getElementById("dueDate").value;
+
+    if(title === "" || subject === "" || dueDate === ""){
+        alert("Please fill all fields");
+        return;
+    }
+
+    assignments.push({
+        title,
+        subject,
+        dueDate,
+        status:"Pending"
+    });
+
+    document.getElementById("title").value="";
+    document.getElementById("subject").value="";
+    document.getElementById("dueDate").value="";
+
+    updateSubjectFilter();
+    displayAssignments(assignments);
+    updateDashboard();
+}
+
+function displayAssignments(data){
+
+    const table = document.getElementById("assignmentTable");
+    table.innerHTML = "";
+
+    data.forEach((assignment,index)=>{
+
+        table.innerHTML += `
+        <tr>
+            <td>${assignment.title}</td>
+            <td>${assignment.subject}</td>
+            <td>${assignment.dueDate}</td>
+
+            <td>
+                <select class="status-select"
+                onchange="changeStatus(${index},this.value)">
+                    <option value="Pending"
+                    ${assignment.status==="Pending"?"selected":""}>
+                    Pending
+                    </option>
+
+                    <option value="Submitted"
+                    ${assignment.status==="Submitted"?"selected":""}>
+                    Submitted
+                    </option>
+
+                    <option value="Late"
+                    ${assignment.status==="Late"?"selected":""}>
+                    Late
+                    </option>
+                </select>
+            </td>
+        </tr>
+        `;
+    });
+}
+
+function changeStatus(index,status){
+    assignments[index].status = status;
+    updateDashboard();
+}
+
+function updateDashboard(){
+
+    let submitted = assignments.filter(
+        a=>a.status==="Submitted"
+    ).length;
+
+    let pending = assignments.filter(
+        a=>a.status==="Pending"
+    ).length;
+
+    let late = assignments.filter(
+        a=>a.status==="Late"
+    ).length;
+
+    document.getElementById("submittedCount").innerText=submitted;
+    document.getElementById("pendingCount").innerText=pending;
+    document.getElementById("lateCount").innerText=late;
+}
+
+function updateSubjectFilter(){
+
+    const filter = document.getElementById("filterSubject");
+
+    let subjects = [...new Set(
+        assignments.map(a=>a.subject)
+    )];
+
+    filter.innerHTML =
+    `<option value="All">All</option>`;
+
+    subjects.forEach(subject=>{
+        filter.innerHTML +=
+        `<option value="${subject}">
+        ${subject}
+        </option>`;
+    });
+}
+
+function filterAssignments(){
+
+    const selected =
+    document.getElementById("filterSubject").value;
+
+    if(selected==="All"){
+        displayAssignments(assignments);
+    }
+    else{
+        const filtered =
+        assignments.filter(
+            a=>a.subject===selected
+        );
+
+        displayAssignments(filtered);
+    }
+}
